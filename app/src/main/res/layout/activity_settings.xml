@@ -9,16 +9,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="4dp">
+        android:padding="@dimen/_4dp">
 
         <ImageButton
             android:id="@+id/buttonImage"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/_48dp"
+            android:layout_height="@dimen/_48dp"
             android:backgroundTint="@color/white"
-            android:paddingVertical="4dp"
+            android:paddingVertical="@dimen/_4dp"
             android:src="@drawable/light_mode3"
-            android:contentDescription = "no"
+            android:contentDescription = "@string/no"
             />
 
         <TextView
@@ -27,8 +27,8 @@
             android:layout_height="wrap_content"
             android:text="@string/settings"
             android:textColor="@color/black"
-            android:textSize="22sp"
-            android:paddingTop="8dp">
+            android:textSize="@dimen/_22sp"
+            android:paddingTop="@dimen/_8dp">
 
         </TextView>
 
@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/_24dp"
         tools:ignore="UseSwitchCompatOrMaterialXml">
         <Switch
             android:id="@+id/switchDark"
@@ -45,15 +45,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:paddingEnd="10dp"
-            android:paddingVertical="21dp">
+            android:paddingVertical="@dimen/_21dp">
         </Switch>
         <TextView
             android:id="@+id/textDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dark_mode"
-            android:layout_marginStart="16dp"
-            android:paddingVertical="21dp">
+            android:layout_marginStart="@dimen/_16dp"
+            android:paddingVertical="@dimen/_21dp">
         </TextView>
     </FrameLayout>
     <FrameLayout
@@ -64,15 +64,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/share"
-            android:layout_marginStart="16dp"
-            android:paddingVertical="21dp">
+            android:layout_marginStart="@dimen/_16dp"
+            android:paddingVertical="@dimen/_21dp">
         </TextView>
         <ImageView
             android:id="@+id/imageRepost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/light_mode5"
-            android:paddingVertical="21dp"
+            android:paddingVertical="@dimen/_21dp"
             android:layout_gravity="end"
             android:paddingEnd="18dp"
             >
@@ -86,17 +86,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/support"
-            android:layout_marginStart="16dp"
-            android:paddingVertical="21dp">
+            android:layout_marginStart="@dimen/_16dp"
+            android:paddingVertical="@dimen/_21dp">
         </TextView>
         <ImageView
             android:id="@+id/imageSupport"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/light_mode7"
-            android:paddingVertical="21dp"
+            android:paddingVertical="@dimen/_21dp"
             android:layout_gravity="end"
-            android:paddingEnd="18dp"
+            android:paddingEnd="@dimen/_18dp"
             >
         </ImageView>
     </FrameLayout>
@@ -108,17 +108,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/terms_of_use"
-            android:layout_marginStart="16dp"
-            android:paddingVertical="21dp">
+            android:layout_marginStart="@dimen/_16dp"
+            android:paddingVertical="@dimen/_21dp">
         </TextView>
         <ImageView
             android:id="@+id/imageRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/light_mode6"
-            android:paddingVertical="21dp"
+            android:paddingVertical="@dimen/_21dp"
             android:layout_gravity="end"
-            android:paddingEnd="18dp"
+            android:paddingEnd="@dimen/_18dp"
             >
         </ImageView>
     </FrameLayout>
