@@ -51,6 +51,7 @@
             android:id="@+id/textDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:text="@string/dark_mode"
             android:layout_marginStart="@dimen/_16dp"
             android:paddingVertical="@dimen/_21dp">
@@ -63,6 +64,7 @@
             android:id="@+id/textRepost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:text="@string/share"
             android:layout_marginStart="@dimen/_16dp"
             android:paddingVertical="@dimen/_21dp">
@@ -85,6 +87,7 @@
             android:id="@+id/textSupport"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:text="@string/support"
             android:layout_marginStart="@dimen/_16dp"
             android:paddingVertical="@dimen/_21dp">
@@ -107,6 +110,7 @@
             android:id="@+id/textRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:text="@string/terms_of_use"
             android:layout_marginStart="@dimen/_16dp"
             android:paddingVertical="@dimen/_21dp">
