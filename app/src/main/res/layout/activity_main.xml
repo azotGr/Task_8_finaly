@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:id="@+id/main"
     android:orientation="vertical"
-    android:background="@color/_3772e7">
+    android:background="@color/background">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -13,71 +13,34 @@
 
         <TextView
             android:id="@+id/textPlaylist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@string/playlist_maker"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_20sp"
-            android:layout_marginBottom="@dimen/_24dp"
-            android:paddingStart ="@dimen/_16dp" >
+            style = "@style/TextStyleMain"
+            android:paddingTop="14dp">
         </TextView>
 
     </FrameLayout>
 
     <Button
         android:id="@+id/buttonSearch"
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_16dp"
-        android:backgroundTint="@color/white"
-        android:gravity="center"
+        style="@style/ButtonStyleMain"
         android:text="@string/searching"
         android:textColor="@color/black"
-        app:icon="@drawable/light_mode"
-        app:iconGravity="textStart"
-        app:iconTint="@color/black"
-        app:cornerRadius="@dimen/_16dp"
-        android:layout_marginStart ="@dimen/_16dp"
-        android:layout_marginEnd="@dimen/_16dp"/>
+        app:icon="@drawable/light_mode" />
 
 
     <Button
+        style="@style/ButtonStyleMain"
         android:id="@+id/buttonMedia"
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_16dp"
-        android:backgroundTint="@color/white"
-        android:gravity="center"
         android:text="@string/media"
-        android:textColor="@color/black"
-        app:cornerRadius="16dp"
         app:icon="@drawable/light_mode1"
-        app:iconGravity="textStart"
-        app:iconTint="@color/black"
-        android:paddingStart="@dimen/_16dp"
-        android:layout_marginStart ="@dimen/_16dp"
-        android:layout_marginEnd="@dimen/_16dp"/>
+        />
 
     <Button
         android:id="@+id/buttonSetting"
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
+        style="@style/ButtonStyleMain"
         android:layout_marginBottom="@dimen/_28dp"
-        android:backgroundTint="@color/white"
-        android:gravity="center"
         android:text="@string/settings"
-        android:textColor="@color/black"
-        app:cornerRadius="@dimen/_16dp"
         app:icon="@drawable/light_mode2"
-        app:iconGravity="textStart"
-        app:iconTint="@color/black"
-        android:paddingStart="@dimen/_16dp"
-        android:layout_marginStart ="@dimen/_16dp"
-        android:layout_marginEnd="@dimen/_16dp"/>
-
-
+        />
 
 </LinearLayout>
