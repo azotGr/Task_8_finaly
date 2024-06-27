@@ -14,7 +14,7 @@ class SettingsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings2)
 
-        val returnButton = findViewById<ImageButton>(R.id.buttonReturn)
+        val returnButton = findViewById<ImageButton>(R.id.buttonImage)
 
         returnButton.setOnClickListener {
             val showIntent = Intent(this, MainActivity::class.java)
