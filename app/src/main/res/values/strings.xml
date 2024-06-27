@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Task_8_finaly</string>
+    <string name="settings">Настройки</string>
+    <string name="dark_mode">Темная тема</string>
+    <string name="share">Поделиться приложением</string>
+    <string name="support">Написать в поддержку</string>
+    <string name="terms_of_use">Пользовательское соглашение</string>
+    <string name="no">no</string>
+    <string name="playlist_maker">Playlist maker</string>
+    <string name="searching">Поиск</string>
+    <string name="media">Медиатека</string>
 </resources>
