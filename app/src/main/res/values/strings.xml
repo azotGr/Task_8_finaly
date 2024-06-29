@@ -9,4 +9,10 @@
     <string name="playlist_maker">Playlist maker</string>
     <string name="searching">Поиск</string>
     <string name="media">Медиатека</string>
+    <string name="share_app">https://practicum.yandex.ru/android-developer/?from=catalog</string>
+    <string name="share_title">Выберите приложение</string>
+    <string name="support_email">a.mayorshina@yandex.ru</string>
+    <string name="support_email_1">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="support_email_2">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="user_agreement">https://yandex.ru/legal/practicum_offer/</string>
 </resources>

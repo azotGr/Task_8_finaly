@@ -60,6 +60,7 @@
             android:id="@+id/imageRepost"
             style = "@style/ImageStyleSettings"
             app:srcCompat="@drawable/light_mode5"
+            android:onClick="share"
             >
         </ImageView>
     </FrameLayout>
@@ -76,6 +77,7 @@
             android:id="@+id/imageSupport"
             style = "@style/ImageStyleSettings"
             app:srcCompat="@drawable/light_mode7"
+            android:onClick="writeSupport"
             >
         </ImageView>
     </FrameLayout>
@@ -91,6 +93,7 @@
             android:id="@+id/imageRight"
             style = "@style/ImageStyleSettings"
             app:srcCompat="@drawable/light_mode6"
+            android:onClick="openUsAgr"
             >
         </ImageView>
     </FrameLayout>

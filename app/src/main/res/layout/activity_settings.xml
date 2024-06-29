@@ -54,11 +54,14 @@
             style="@style/TextStyleSettings"
             >
         </TextView>
+
         <ImageView
             android:id="@+id/imageRepost"
-            style = "@style/ImageStyleSettings"
-            app:srcCompat="@drawable/light_mode5"
-            >
+            style="@style/ImageStyleSettings"
+            android:layout_width="wrap_content"
+            android:onClick="share"
+            app:srcCompat="@drawable/light_mode5">
+
         </ImageView>
     </FrameLayout>
     <FrameLayout
@@ -73,7 +76,8 @@
         <ImageView
             android:id="@+id/imageSupport"
             style = "@style/ImageStyleSettings"
-            app:srcCompat="@drawable/light_mode7">
+            app:srcCompat="@drawable/light_mode7"
+            android:onClick="writeSupport">
         </ImageView>
     </FrameLayout>
     <FrameLayout
@@ -89,6 +93,7 @@
             android:id="@+id/imageRight"
             style = "@style/ImageStyleSettings"
             app:srcCompat="@drawable/light_mode6"
+            android:onClick="openUsAgr"
             >
         </ImageView>
     </FrameLayout>
