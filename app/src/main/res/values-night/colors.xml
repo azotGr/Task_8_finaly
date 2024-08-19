@@ -8,4 +8,5 @@
     <color name="text_sett_white">#FF000000</color>
     <color name="image_tint_sett">#FFFFFFFF</color>
     <color name="image_tint_sett_return">#FFFFFFFF</color>
+    <color name="dark_gray">#1A1B22</color>
 </resources>
