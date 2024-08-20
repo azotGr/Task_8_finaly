@@ -1,5 +1,6 @@
 package com.example.task_8_finaly
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 //import android.view.View

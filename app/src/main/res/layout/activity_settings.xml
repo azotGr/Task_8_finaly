@@ -61,7 +61,6 @@
             android:layout_width="wrap_content"
             app:srcCompat="@drawable/light_mode5"
             android:contentDescription="@string/description_of_image_repost">
-
         </ImageView>
     </FrameLayout>
     <FrameLayout
