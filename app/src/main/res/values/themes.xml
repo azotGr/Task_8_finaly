@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.Task_8_finaly.Light" parent="Theme.MaterialComponents.DayNight.NoActionBar">
     </style>
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar"> </style>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    </style>
 
 </resources>

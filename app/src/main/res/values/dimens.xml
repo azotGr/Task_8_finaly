@@ -30,4 +30,6 @@
     <dimen name="track_image_corner_radius">2dp</dimen>
     <dimen name="errorMessage">19sp</dimen>
     <dimen name="update_button_text_size">14sp</dimen>
+    <dimen name="_12dp">12dp</dimen>
+    <dimen name="_8_5dp">8.5dp</dimen>
 </resources>

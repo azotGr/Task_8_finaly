@@ -9,5 +9,7 @@
     <color name="image_tint_sett">#AEAFB4</color>
     <color name="image_tint_sett_return">#FF000000</color>
     <color name="dark_gray">#1A1B22</color>
+    <color name="color_for_searchLine_text">#AEAFB4</color>
+    <color name="color_for_searchLine">#E6E8EB</color>
 
 </resources>

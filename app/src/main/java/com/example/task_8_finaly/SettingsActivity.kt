@@ -26,7 +26,6 @@ class SettingsActivity : AppCompatActivity() {
         backButton.setOnClickListener {
             //val intent = Intent(this, MainActivity::class.java)
             //tartActivity(intent)
-            //зачем мы делаем переход, если из-за него будет наложение активити
             finish()
         }
 
@@ -81,6 +80,5 @@ class SettingsActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         }
-
     }
 }
