@@ -9,4 +9,13 @@
     <string name="playlist_maker">Playlist maker</string>
     <string name="searching">Поиск</string>
     <string name="media">Медиатека</string>
+    <string name="description_of_image_repost">Поделится</string>
+    <string name="description_of_image_agree">Пользовательское соглашение</string>
+    <string name="description_of_image_support">Написать в поддержку</string>
+    <string name="yandex_curses">https://practicum.yandex.ru/android-developer/?from=catalog</string>
+    <string name="email">tchatskaya.alina@yandex.ru</string>
+    <string name="title_email">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="text_email">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="offer">https://yandex.ru/legal/practicum_offer/</string>
+
 </resources>

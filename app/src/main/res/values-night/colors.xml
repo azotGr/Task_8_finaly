@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">#1A1B22</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="background_sett">#1A1B22</color>
+    <color name="text_sett">#FFFFFFFF</color>
+    <color name="text_sett_white">#FF000000</color>
+    <color name="image_tint_sett">#FFFFFFFF</color>
+    <color name="image_tint_sett_return">#FFFFFFFF</color>
+    <color name="dark_gray">#1A1B22</color>
+    <color name="color_for_searchLine_text">#1A1B22</color>
+    <color name="color_for_searchLine">#E6E8EB</color>
+</resources>
