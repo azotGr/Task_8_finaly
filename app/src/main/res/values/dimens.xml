@@ -24,12 +24,18 @@
     <dimen name="layout_margin_bottom">16dp</dimen>
     <dimen name="button_corner_radius">16dp</dimen>
     <dimen name="clear_button_padding_end">16dp</dimen>
-    <dimen name="track_item_padding">8dp</dimen>
-    <dimen name="track_item_image_size">45dp</dimen>
-    <dimen name="text_small_for_search">11sp</dimen>
-    <dimen name="track_image_corner_radius">2dp</dimen>
     <dimen name="errorMessage">19sp</dimen>
     <dimen name="update_button_text_size">14sp</dimen>
     <dimen name="_12dp">12dp</dimen>
     <dimen name="_8_5dp">8.5dp</dimen>
+
+    <dimen name="track_item_padding">8dp</dimen>
+    <dimen name="track_item_image_size">45dp</dimen>
+    <dimen name="text_small_for_search">11sp</dimen>
+    <dimen name="track_image_corner_radius">2dp</dimen>
+    <dimen name="_300dp">300dp</dimen>
+    <dimen name="_1dp">1dp</dimen>
+    <dimen name="_150dp">150dp</dimen>
+    <dimen name="_5dp">5dp</dimen>
+    <dimen name="_19dp">19dp</dimen>
 </resources>
