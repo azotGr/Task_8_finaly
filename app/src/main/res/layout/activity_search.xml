@@ -7,6 +7,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/background_sett"
+    android:imeOptions="actionDone"
+    android:singleLine="true"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -69,4 +71,56 @@
         android:layout_marginVertical="@dimen/_24dp"
         android:visibility="gone"
         tools:listitem="@layout/item_track" />
+    <LinearLayout
+        android:id="@+id/errorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16dp"
+        android:layout_marginBottom="@dimen/_16dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/placeholderError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_102dp" />
+
+        <TextView
+            android:id="@+id/messageError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16dp"
+            android:textAlignment="center"
+            android:textColor="@color/background_sett_return"
+            android:textSize="@dimen/errorMessage" />
+
+        <LinearLayout
+            android:id="@+id/update_button_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_24dp"
+            android:layout_marginBottom="@dimen/layout_margin_bottom"
+            android:background="@drawable/update_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/update_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="false"
+                android:focusable="false"
+                android:text="@string/update"
+                android:background="@android:color/transparent"
+                android:textAllCaps="false"
+                android:textSize="@dimen/update_button_text_size"
+                android:fontFamily="@font/ys_display_medium"
+                android:letterSpacing="0" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
