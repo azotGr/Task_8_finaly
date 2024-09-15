@@ -87,6 +87,7 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter = TrackAdapter(emptyList())
         recyclerView?.adapter = trackAdapter
         recyclerView?.layoutManager = LinearLayoutManager(this)
+        
 
         searchLine.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -98,8 +99,6 @@ class SearchActivity : AppCompatActivity() {
                     recyclerView?.visibility = View.GONE
                     hideError()
                     hideUpdateButton()
-                } else {
-                    DoSearch(s.toString())
                 }
             }
 
@@ -115,6 +114,7 @@ class SearchActivity : AppCompatActivity() {
                 false
             }
         }
+
 
         backButton.setOnClickListener {
             finish()

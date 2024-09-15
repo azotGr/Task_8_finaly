@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/background_sett"
-    android:imeOptions="actionDone"
     android:singleLine="true"
     android:fitsSystemWindows="true">
 
@@ -51,7 +50,8 @@
             android:paddingBottom="@dimen/_8_5dp"
             android:drawableStart="@drawable/search_icon"
             android:drawableTint="@color/color_for_searchLine_text"
-            android:textColor="@color/black">
+            android:textColor="@color/black"
+            android:imeOptions="actionDone">
         </EditText>
         <ImageView
             android:id="@+id/clearIcon"
