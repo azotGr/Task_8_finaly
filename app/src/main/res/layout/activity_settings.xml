@@ -42,11 +42,13 @@
             android:orientation="horizontal"
             android:layout_marginTop="@dimen/_24dp"
             tools:ignore="UseSwitchCompatOrMaterialXml">
-            <Switch
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/switchDark"
                 style="@style/ImageStyleSettings"
-                android:paddingEnd="6dp">
-            </Switch>
+                android:paddingEnd="6dp"
+                tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml"
+            />
             <TextView
                 android:id="@+id/textDark"
                 android:text="@string/dark_mode"

@@ -20,25 +20,18 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        //кнопочка назад должна воркинг
+        val themeSwitch: SwitchMaterial = findViewById(R.id.switchDark)
+        val app = applicationContext as App
 
-        val backButton: ImageButton = findViewById(R.id.buttonImage)
-        backButton.setOnClickListener {
-            finish()
-        }
+        themeSwitch.isChecked = app.darkTheme
+        themeSwitch.setOnCheckedChangeListener { switcher, checked ->
+            app.switchTheme(checked)
 
-        //свитч туда-сюда подключаем, а то чо он сидит ничего не делает
+            //кнопочка назад должна воркинг
 
-        val themeSwitch: Switch = findViewById(R.id.switchDark)
-
-        val currentNightMode = AppCompatDelegate.getDefaultNightMode()
-        themeSwitch.isChecked = currentNightMode == AppCompatDelegate.MODE_NIGHT_YES
-
-        themeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            val backButton: ImageButton = findViewById(R.id.buttonImage)
+            backButton.setOnClickListener {
+                finish()
             }
         }
 
