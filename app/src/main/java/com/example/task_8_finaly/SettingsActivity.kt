@@ -14,18 +14,22 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 
+
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var themeSwitch: SwitchMaterial
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val themeSwitch: SwitchMaterial = findViewById(R.id.switchDark)
-        val app = applicationContext as App
+        val sharedPreferences = getSharedPreferences("ThemePrefs", MODE_PRIVATE)
+        val darkThemeEnabled = sharedPreferences.getBoolean("DARK_THEME", false)
 
-        themeSwitch.isChecked = app.darkTheme
-        themeSwitch.setOnCheckedChangeListener { switcher, checked ->
-            app.switchTheme(checked)
+        themeSwitch = findViewById(R.id.switchDark)
+        themeSwitch.isChecked = darkThemeEnabled
+        themeSwitch.setOnCheckedChangeListener { _, checked ->
+            (applicationContext as App).switchTheme(checked)
 
             //кнопочка назад должна воркинг
 

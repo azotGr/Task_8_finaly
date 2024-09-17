@@ -12,6 +12,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
@@ -62,9 +63,7 @@ class SearchActivity : AppCompatActivity() {
         errorLayout = findViewById(R.id.errorLayout)
         updateButtonLayout = findViewById(R.id.update_button_layout)
         updateButton = findViewById(R.id.update_button)
-
         searchHint = findViewById(R.id.searchHint)
-
         recyclerView?.visibility = View.GONE
         errorLayout.visibility = View.GONE
 
@@ -127,7 +126,17 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrEmpty()) {
+                    //для кнокпи стереть
+                    recyclerView?.visibility = View.GONE
+                    hideError()
+                    hideUpdateButton()
+                    if (searchLine.hasFocus()) {
+                        searchHistoryTracks.loadSearchHistory()
+                    }
+                }
+            }
         })
 
         searchLine.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
@@ -140,10 +149,20 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
+        //обработка пустого запроса от пользователя
+
         searchLine.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                DoSearch(searchLine.text.toString())
-                hideKeyboard()
+                val query = searchLine.text.toString().trim()
+                if (query.isNotEmpty()) {
+                    DoSearch(query)
+                    hideKeyboard()
+                    searchHint.visibility = View.GONE
+                    searchHistoryTracks.hideHistory()
+                } else {
+                    recyclerView?.visibility = View.GONE
+                    Toast.makeText(this, "Введите непустой запрос", Toast.LENGTH_SHORT).show()
+                }
                 true
             } else {
                 false

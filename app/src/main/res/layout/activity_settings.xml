@@ -48,6 +48,8 @@
                 style="@style/ImageStyleSettings"
                 android:paddingEnd="6dp"
                 tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml"
+                app:thumbTint="@color/switch_knob_color"
+                app:trackTint="@color/switch_track_color"
             />
             <TextView
                 android:id="@+id/textDark"
