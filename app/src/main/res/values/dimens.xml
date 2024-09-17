@@ -38,4 +38,7 @@
     <dimen name="_150dp">150dp</dimen>
     <dimen name="_5dp">5dp</dimen>
     <dimen name="_19dp">19dp</dimen>
+    <dimen name="_54dp">54dp</dimen>
+    <dimen name="_102dp">102dp</dimen>
+    <dimen name="_14dp">14dp</dimen>
 </resources>
