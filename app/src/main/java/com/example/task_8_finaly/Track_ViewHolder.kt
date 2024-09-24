@@ -25,10 +25,12 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         artistName.text = track.artistName
         trackTime.text = dateFormat.format(track.trackTime)
 
-        val requestOptions =
-            RequestOptions().transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.track_image_corner_radius)))
-                .placeholder(R.drawable.placeholder)
-                .error(R.drawable.placeholder)
+        val radius =
+            itemView.context.resources.getDimensionPixelSize(R.dimen.track_image_corner_radius)
+        val requestOptions = RequestOptions()
+            .placeholder(R.drawable.placeholder) // Placeholder при загрузке
+            .error(R.drawable.placeholder) // Placeholder при ошибке
+            .transform(RoundedCorners(radius))
 
         Glide.with(itemView)
             .load(track.artworkUrl100)

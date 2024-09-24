@@ -14,31 +14,28 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 
+
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var themeSwitch: SwitchMaterial
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        //кнопочка назад должна воркинг
+        val sharedPreferences = getSharedPreferences("ThemePrefs", MODE_PRIVATE)
+        val darkThemeEnabled = sharedPreferences.getBoolean("DARK_THEME", false)
 
-        val backButton: ImageButton = findViewById(R.id.buttonImage)
-        backButton.setOnClickListener {
-            finish()
-        }
+        themeSwitch = findViewById(R.id.switchDark)
+        themeSwitch.isChecked = darkThemeEnabled
+        themeSwitch.setOnCheckedChangeListener { _, checked ->
+            (applicationContext as App).switchTheme(checked)
 
-        //свитч туда-сюда подключаем, а то чо он сидит ничего не делает
+            //кнопочка назад должна воркинг
 
-        val themeSwitch: Switch = findViewById(R.id.switchDark)
-
-        val currentNightMode = AppCompatDelegate.getDefaultNightMode()
-        themeSwitch.isChecked = currentNightMode == AppCompatDelegate.MODE_NIGHT_YES
-
-        themeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            val backButton: ImageButton = findViewById(R.id.buttonImage)
+            backButton.setOnClickListener {
+                finish()
             }
         }
 

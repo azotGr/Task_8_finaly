@@ -12,6 +12,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
@@ -36,6 +37,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var errorLayout: LinearLayout
     private lateinit var updateButtonLayout: LinearLayout
     private lateinit var updateButton: Button
+
+    private lateinit var searchHistoryTracks: SearchHistoryTracks
+    private lateinit var searchHint: TextView
+
     private var lastQuery: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +63,7 @@ class SearchActivity : AppCompatActivity() {
         errorLayout = findViewById(R.id.errorLayout)
         updateButtonLayout = findViewById(R.id.update_button_layout)
         updateButton = findViewById(R.id.update_button)
+        searchHint = findViewById(R.id.searchHint)
         recyclerView?.visibility = View.GONE
         errorLayout.visibility = View.GONE
 
@@ -78,16 +84,29 @@ class SearchActivity : AppCompatActivity() {
             recyclerView?.visibility = View.GONE
             hideError()
             hideUpdateButton()
+            searchHint.visibility = View.VISIBLE // Показываем searchHint после очистки текста
+            searchHistoryTracks.loadSearchHistory() // Загрузка истории после очистки текста
         }
 
         updateButton.setOnClickListener {
             retryLastSearch()
         }
 
-        trackAdapter = TrackAdapter(emptyList())
+        trackAdapter = TrackAdapter(emptyList()) { track ->  // Начинаем с пустого списка треков
+            searchHistoryTracks.addTrackToHistory(track)
+            searchHistoryTracks.hideHistory()
+        }
         recyclerView?.adapter = trackAdapter
         recyclerView?.layoutManager = LinearLayoutManager(this)
-        
+
+        searchHistoryTracks = SearchHistoryTracks(
+            this,
+            findViewById(R.id.recyclerHistoryTracks),
+            findViewById(R.id.historyClear),
+            findViewById(R.id.searchHistoryHeader)
+        )
+
+
 
         searchLine.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -99,16 +118,51 @@ class SearchActivity : AppCompatActivity() {
                     recyclerView?.visibility = View.GONE
                     hideError()
                     hideUpdateButton()
+                    searchHint.visibility = View.VISIBLE
+                    searchHistoryTracks.loadSearchHistory()
+                } else{
+                    searchHint.visibility = View.GONE
+                    searchHistoryTracks.hideHistory()
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrEmpty()) {
+                    //для кнокпи стереть
+                    recyclerView?.visibility = View.GONE
+                    hideError()
+                    hideUpdateButton()
+                    if (searchLine.hasFocus()) {
+                        searchHistoryTracks.loadSearchHistory()
+                    }
+                }
+            }
         })
+
+        searchLine.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && searchLine.text.isEmpty()) {
+                searchHint.visibility = View.VISIBLE
+                searchHistoryTracks.loadSearchHistory()
+            } else {
+                searchHint.visibility = View.GONE
+                searchHistoryTracks.hideHistory()
+            }
+        }
+
+        //обработка пустого запроса от пользователя
 
         searchLine.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                DoSearch(searchLine.text.toString())
-                hideKeyboard()
+                val query = searchLine.text.toString().trim()
+                if (query.isNotEmpty()) {
+                    DoSearch(query)
+                    hideKeyboard()
+                    searchHint.visibility = View.GONE
+                    searchHistoryTracks.hideHistory()
+                } else {
+                    recyclerView?.visibility = View.GONE
+                    Toast.makeText(this, "Введите непустой запрос", Toast.LENGTH_SHORT).show()
+                }
                 true
             } else {
                 false
@@ -126,6 +180,7 @@ class SearchActivity : AppCompatActivity() {
             val searchText = savedInstanceState.getString("SEARCH_TEXT")
             searchLine.setText(searchText)
             searchLine.setSelection(searchText?.length ?: 0)
+            searchHint.visibility = if (searchText.isNullOrEmpty()) View.VISIBLE else View.GONE
         }
 
     }
