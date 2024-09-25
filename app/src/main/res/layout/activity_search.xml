@@ -46,14 +46,6 @@
             android:textCursorDrawable="@drawable/search_cursor_color">
         </EditText>
 
-        <TextView
-            android:id="@+id/searchHint"
-            style="@style/SearchHintTextView"
-            android:layout_below="@id/searchLine"
-            android:text="@string/search_hint_text"
-            android:textColor="@color/background_sett_return"
-            tools:visibility="visible" />
-
         <ImageView
             android:id="@+id/clearIcon"
             style="@style/ClearButton"

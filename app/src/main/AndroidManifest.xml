@@ -26,6 +26,11 @@
             android:name=".SettingsActivity"
             android:exported="false"
             android:theme="@style/AppThemeOne"/>
+        <activity android:name=".ActivityPlayer"
+            android:label="@string/player"
+            android:launchMode="singleTop"
+            android:theme="@style/AppThemeOne">
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -1,5 +1,6 @@
 package com.example.task_8_finaly
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,10 +18,12 @@ class SearchHistoryTracks(
     private val sharedPreferences =
         context.getSharedPreferences("search_history", Context.MODE_PRIVATE)
     private val historyAdapter: TrackAdapter
+    private var onItemClickListener: ((Track) -> Unit)? = null
 
     init {
         historyAdapter = TrackAdapter(emptyList()) { track ->
             addTrackToHistory(track)
+            startPlayerActivity(track)
         }
         historyRecyclerView.adapter = historyAdapter
         historyRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -32,7 +35,7 @@ class SearchHistoryTracks(
         loadSearchHistory()
     }
 
-    // Добавление трека в историю поиска
+    //добавление трека в историю поиска
     fun addTrackToHistory(track: Track) {
         val history = getSearchHistory().toMutableList()
         history.remove(track) // Удаляем трек, если он уже есть в истории
@@ -46,20 +49,20 @@ class SearchHistoryTracks(
         loadSearchHistory()
     }
 
-    // Получение истории поиска
+    //получение истории поиска
     private fun getSearchHistory(): List<Track> {
         val json = sharedPreferences.getString("history", null) ?: return emptyList()
         val type = object : TypeToken<List<Track>>() {}.type
         return Gson().fromJson(json, type)
     }
 
-    // Сохранение истории поиска
+    //сохранение истории поиска
     private fun saveSearchHistory(history: List<Track>) {
         val json = Gson().toJson(history)
         sharedPreferences.edit().putString("history", json).apply()
     }
 
-    // Загрузка и отображение истории поиска
+    //загрузка и отображение истории поиска
     fun loadSearchHistory() {
         if (hasHistory()) {
             val history = getSearchHistory()
@@ -85,5 +88,15 @@ class SearchHistoryTracks(
     private fun clearHistory() {
         saveSearchHistory(emptyList())
         hideHistory()
+    }
+
+    fun setOnItemClickListener(listener: (Track) -> Unit) {
+        this.onItemClickListener = listener
+    }
+
+    private fun startPlayerActivity(track: Track) {
+        val intent = Intent(context, ActivityPlayer::class.java)
+        intent.putExtra("track", track)
+        context.startActivity(intent)
     }
 }

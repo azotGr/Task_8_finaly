@@ -1,5 +1,6 @@
 package com.example.task_8_finaly
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -39,7 +40,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var updateButton: Button
 
     private lateinit var searchHistoryTracks: SearchHistoryTracks
-    private lateinit var searchHint: TextView
 
     private var lastQuery: String = ""
 
@@ -63,7 +63,6 @@ class SearchActivity : AppCompatActivity() {
         errorLayout = findViewById(R.id.errorLayout)
         updateButtonLayout = findViewById(R.id.update_button_layout)
         updateButton = findViewById(R.id.update_button)
-        searchHint = findViewById(R.id.searchHint)
         recyclerView?.visibility = View.GONE
         errorLayout.visibility = View.GONE
 
@@ -84,8 +83,8 @@ class SearchActivity : AppCompatActivity() {
             recyclerView?.visibility = View.GONE
             hideError()
             hideUpdateButton()
-            searchHint.visibility = View.VISIBLE // Показываем searchHint после очистки текста
             searchHistoryTracks.loadSearchHistory() // Загрузка истории после очистки текста
+            trackAdapter.updateTracks(emptyList())
         }
 
         updateButton.setOnClickListener {
@@ -95,6 +94,7 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter = TrackAdapter(emptyList()) { track ->  // Начинаем с пустого списка треков
             searchHistoryTracks.addTrackToHistory(track)
             searchHistoryTracks.hideHistory()
+            startPlayerActivity(track)
         }
         recyclerView?.adapter = trackAdapter
         recyclerView?.layoutManager = LinearLayoutManager(this)
@@ -105,6 +105,11 @@ class SearchActivity : AppCompatActivity() {
             findViewById(R.id.historyClear),
             findViewById(R.id.searchHistoryHeader)
         )
+
+        searchHistoryTracks.setOnItemClickListener { track ->
+            startPlayerActivity(track)
+        }
+
 
 
 
@@ -118,10 +123,9 @@ class SearchActivity : AppCompatActivity() {
                     recyclerView?.visibility = View.GONE
                     hideError()
                     hideUpdateButton()
-                    searchHint.visibility = View.VISIBLE
                     searchHistoryTracks.loadSearchHistory()
+                    trackAdapter.updateTracks(emptyList())
                 } else{
-                    searchHint.visibility = View.GONE
                     searchHistoryTracks.hideHistory()
                 }
             }
@@ -134,6 +138,7 @@ class SearchActivity : AppCompatActivity() {
                     hideUpdateButton()
                     if (searchLine.hasFocus()) {
                         searchHistoryTracks.loadSearchHistory()
+                        trackAdapter.updateTracks(emptyList())
                     }
                 }
             }
@@ -141,10 +146,8 @@ class SearchActivity : AppCompatActivity() {
 
         searchLine.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus && searchLine.text.isEmpty()) {
-                searchHint.visibility = View.VISIBLE
                 searchHistoryTracks.loadSearchHistory()
             } else {
-                searchHint.visibility = View.GONE
                 searchHistoryTracks.hideHistory()
             }
         }
@@ -157,7 +160,6 @@ class SearchActivity : AppCompatActivity() {
                 if (query.isNotEmpty()) {
                     DoSearch(query)
                     hideKeyboard()
-                    searchHint.visibility = View.GONE
                     searchHistoryTracks.hideHistory()
                 } else {
                     recyclerView?.visibility = View.GONE
@@ -180,7 +182,6 @@ class SearchActivity : AppCompatActivity() {
             val searchText = savedInstanceState.getString("SEARCH_TEXT")
             searchLine.setText(searchText)
             searchLine.setSelection(searchText?.length ?: 0)
-            searchHint.visibility = if (searchText.isNullOrEmpty()) View.VISIBLE else View.GONE
         }
 
     }
@@ -263,6 +264,12 @@ class SearchActivity : AppCompatActivity() {
         val searchText = savedInstanceState.getString("SEARCH_TEXT")
         searchLine.setText(searchText)
         searchLine.setSelection(searchText?.length ?: 0)
+    }
+
+    private fun startPlayerActivity(track: Track) {
+        val intent = Intent(this@SearchActivity, ActivityPlayer::class.java)
+        intent.putExtra("track", track)
+        startActivity(intent)
     }
 
 }

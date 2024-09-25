@@ -103,4 +103,14 @@
         <item name="android:paddingHorizontal">16dp</item>
     </style>
 
+    <style name="ButtonBackForPlayList">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:backgroundTint">@color/background_sett</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+
 </resources>
