@@ -30,13 +30,13 @@ class SettingsActivity : AppCompatActivity() {
         themeSwitch.isChecked = darkThemeEnabled
         themeSwitch.setOnCheckedChangeListener { _, checked ->
             (applicationContext as App).switchTheme(checked)
+        }
 
-            //кнопочка назад должна воркинг
+        //кнопочка назад должна воркинг
 
-            val backButton: ImageButton = findViewById(R.id.buttonImage)
-            backButton.setOnClickListener {
-                finish()
-            }
+        val backButton: ImageButton = findViewById(R.id.buttonImage)
+        backButton.setOnClickListener {
+            finish()
         }
 
         //BUTTON SHARE

@@ -42,4 +42,10 @@
     <dimen name="_102dp">102dp</dimen>
     <dimen name="_14dp">14dp</dimen>
     <dimen name="_2dp">2dp</dimen>
+
+    <dimen name="player_small_button">52dp</dimen>
+    <dimen name="player_big_button">84dp</dimen>
+    <dimen name="player_height">32dp</dimen>
+    <dimen name="_12sp">12sp</dimen>
+    <dimen name="player_image_corner_radius">8dp</dimen>
 </resources>
