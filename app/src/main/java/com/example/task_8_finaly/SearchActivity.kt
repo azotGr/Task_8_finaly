@@ -2,7 +2,6 @@ package com.example.task_8_finaly
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -25,8 +24,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.os.Handler
-import android.util.Log
 
 class SearchActivity : AppCompatActivity() {
 
@@ -38,7 +35,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var iTunesService: iTunesAPI
     private lateinit var placeholderError: ImageView
     private lateinit var messageError: TextView
-    private lateinit var progressBarScreen: LinearLayout
     private lateinit var errorLayout: LinearLayout
     private lateinit var updateButtonLayout: LinearLayout
     private lateinit var updateButton: Button
@@ -46,9 +42,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchHistoryTracks: SearchHistoryTracks
 
     private var lastQuery: String = ""
-
-    private val handler = Handler(Looper.getMainLooper())
-    private var searchRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,10 +63,8 @@ class SearchActivity : AppCompatActivity() {
         errorLayout = findViewById(R.id.errorLayout)
         updateButtonLayout = findViewById(R.id.update_button_layout)
         updateButton = findViewById(R.id.update_button)
-        progressBarScreen = findViewById(R.id.progressBarLayout)
         recyclerView?.visibility = View.GONE
         errorLayout.visibility = View.GONE
-        progressBarScreen.visibility = View.GONE
 
 
         val backButton: ImageButton = findViewById(R.id.buttonBackSearch)
@@ -101,12 +92,9 @@ class SearchActivity : AppCompatActivity() {
         }
 
         trackAdapter = TrackAdapter(emptyList()) { track ->  // Начинаем с пустого списка треков
-            handler.removeCallbacksAndMessages(null)
-            handler.postDelayed({
-                searchHistoryTracks.addTrackToHistory(track)
-                searchHistoryTracks.hideHistory()
-                startPlayerActivity(track)
-            }, 300)
+            searchHistoryTracks.addTrackToHistory(track)
+            searchHistoryTracks.hideHistory()
+            startPlayerActivity(track)
         }
         recyclerView?.adapter = trackAdapter
         recyclerView?.layoutManager = LinearLayoutManager(this)
@@ -139,8 +127,6 @@ class SearchActivity : AppCompatActivity() {
                     trackAdapter.updateTracks(emptyList())
                 } else{
                     searchHistoryTracks.hideHistory()
-                    progressBarScreen.visibility = View.VISIBLE
-                    debounceSearch(s.toString())
                 }
             }
 
@@ -200,48 +186,31 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
-    // Выполнение поискового запроса с задержкой (debounce)
-    private fun debounceSearch(query: String) {
-        searchRunnable?.let { handler.removeCallbacks(it) }
-        searchRunnable = Runnable {
-            DoSearch(query)
-        }
-        searchRunnable?.let { runnable ->
-            handler.postDelayed(runnable, 2000)}
-    }
-
     private fun DoSearch(query: String) {
         lastQuery = query
-        hideError()
-        hideUpdateButton()
         val call = iTunesService.search(query)
         call.enqueue(object : Callback<ItunesSearchResponse> {
             override fun onResponse(
                 call: Call<ItunesSearchResponse>,
                 response: Response<ItunesSearchResponse>
             ) {
-                progressBarScreen.visibility = View.GONE
                 if (response.isSuccessful) {
                     val searchResponse = response.body()
                     if (searchResponse != null && searchResponse.results.isNotEmpty()) {
                         val tracks = searchResponse.results
                         trackAdapter.updateTracks(tracks)
                         recyclerView?.visibility = View.VISIBLE
-                        Log.d("NOTNULL", "isSuccessful")
                         hideError()
                         hideUpdateButton()
                     } else {
                         NoResults()
-                        Log.d("NoResultsPlaceholder", "isSuccessful")
                     }
                 } else {
                     showError()
-                    Log.d("NoResultsPlaceholder", "isSuccessful")
                 }
             }
 
             override fun onFailure(call: Call<ItunesSearchResponse>, t: Throwable) {
-                progressBarScreen.visibility = View.GONE
                 showError()
             }
         })
@@ -271,7 +240,6 @@ class SearchActivity : AppCompatActivity() {
         updateButtonLayout.visibility = View.VISIBLE
         messageError.text = getString(R.string.no_int)
         placeholderError.setImageResource(R.drawable.not_internet)
-        searchHistoryTracks.hideHistory()
     }
 
 
