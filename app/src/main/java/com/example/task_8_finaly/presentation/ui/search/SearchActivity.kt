@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -23,17 +22,12 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.task_8_finaly.R
-import com.example.task_8_finaly.data.dto.ItunesSearchResponse
-import com.example.task_8_finaly.data.network.iTunesAPI
 import com.example.task_8_finaly.domain.api.SearchTrackInter
 import com.example.task_8_finaly.domain.models.Track
 import com.example.task_8_finaly.presentation.Creator
 import com.example.task_8_finaly.presentation.ui.adapter.TrackAdapter
 import com.example.task_8_finaly.presentation.ui.player.ActivityPlayer
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class SearchActivity : AppCompatActivity() {
 
