@@ -1,10 +1,7 @@
-package com.example.task_8_finaly
+package com.example.task_8_finaly.presentation.ui.player
 
-import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -12,18 +9,25 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.example.task_8_finaly.R
+import com.example.task_8_finaly.domain.api.PlayInter
+import com.example.task_8_finaly.domain.impl.PlayImpl
+import com.example.task_8_finaly.domain.models.Track
+import com.example.task_8_finaly.presentation.Creator
 
 class ActivityPlayer : AppCompatActivity() {
 
-    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var playInter: PlayInter
     private lateinit var playButton: ImageButton
-    private lateinit var handler: Handler
-    private lateinit var runnable: Runnable
     private lateinit var currentPlayTimeTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
+
+        currentPlayTimeTextView = findViewById(R.id.current_time)
+        playButton = findViewById(R.id.button_play)
+
 
         val track = intent.getSerializableExtra("track") as Track
 
@@ -36,8 +40,6 @@ class ActivityPlayer : AppCompatActivity() {
         val countryText: TextView = findViewById(R.id.country)
         val trackTimeText: TextView = findViewById(R.id.time)
         val backButton: Button = findViewById(R.id.button_back)
-        val currentPlayTimeTextView: TextView = findViewById(R.id.current_time)
-        playButton = findViewById(R.id.button_play)
 
         trackText.text = track.trackName
         artistText.text = track.artistName
@@ -55,68 +57,52 @@ class ActivityPlayer : AppCompatActivity() {
             .apply(RequestOptions().transform(RoundedCorners(radius)))
             .into(coverImageView)
 
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(track.previewUrl)
-            prepare()
-        }
-
-        handler = Handler(Looper.getMainLooper())
-        runnable = object : Runnable {
-            override fun run() {
-                if (mediaPlayer.isPlaying) {
-                    val currentPosition = mediaPlayer.currentPosition / 1000
-                    currentPlayTimeTextView.text = String.format(
-                        "%02d:%02d",
-                        currentPosition / 60,
-                        currentPosition % 60
-                    )
-                    handler.postDelayed(this, 1000)
-                }
-            }
-        }
+        playInter = Creator.providePlayInter()
+        playInter.preparePlayer(track, ::updatePlayTime, ::onTrackComplete)
 
         // Логика кнопки "Play/Pause"
         playButton.setOnClickListener {
-            if (mediaPlayer.isPlaying) {
-                mediaPlayer.pause()
+            if (playInter.isPlaying()) {
+                playInter.pause()
                 playButton.setImageResource(R.drawable.vector)
-                handler.removeCallbacks(runnable) // Останавливаем обновление текущего времени
             } else {
-                if (mediaPlayer.currentPosition == mediaPlayer.duration) {
-                    mediaPlayer.seekTo(0) // Начинаем с начала, если трек был проигран до конца
+                if (playInter.hasReachedEnd()) {
+                    playInter.seekToStart()
                 }
-                mediaPlayer.start()
+                playInter.play(::updatePlayTime)
                 playButton.setImageResource(R.drawable.pause)
-                handler.post(runnable) // Запускаем обновление текущего времени
             }
         }
-
-        // Cлушатель окончания трека
-        mediaPlayer.setOnCompletionListener {
-            playButton.setImageResource(R.drawable.vector)
-            currentPlayTimeTextView.text = "00:00" // Сбрасываем время воспроизведения
-            handler.removeCallbacks(runnable) // Останавливаем обновление текущего времени
-        }
-
+        
 
         backButton.setOnClickListener {
             onBackPressed()
         }
     }
 
+
     override fun onPause() {
         super.onPause()
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.pause()
-            playButton.setImageResource(R.drawable.vector) // Меняем иконку на "Play"
-            handler.removeCallbacks(runnable) // Останавливаем обновление текущего времени
+        if (playInter.isPlaying()) {
+            playInter.pause()
+            playButton.setImageResource(R.drawable.vector)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release() // Освобождаем ресурсы MediaPlayer
-        handler.removeCallbacks(runnable) // Останавливаем обновление времени
+        playInter.release()
+    }
+
+    // Обновление времени воспроизведения
+    private fun updatePlayTime(formattedTime: String) {
+        currentPlayTimeTextView.text = formattedTime
+    }
+
+    // Завершение трека
+    private fun onTrackComplete() {
+        playButton.setImageResource(R.drawable.vector)
+        currentPlayTimeTextView.text = "00:00" // Сброс времени
     }
 
     private fun trackTime(trackTime: Long): String {

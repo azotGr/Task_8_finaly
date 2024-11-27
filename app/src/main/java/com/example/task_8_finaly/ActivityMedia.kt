@@ -1,10 +1,11 @@
-package com.example.task_8_finaly
+package com.example.task_8_finaly.presentation.ui.player
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.task_8_finaly.R
 
 class ActivityMedia : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

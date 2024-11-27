@@ -1,4 +1,4 @@
-package com.example.task_8_finaly
+package com.example.task_8_finaly.presentation.ui.settings
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -11,6 +11,8 @@ import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.task_8_finaly.R
+import com.example.task_8_finaly.presentation.app.App
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 

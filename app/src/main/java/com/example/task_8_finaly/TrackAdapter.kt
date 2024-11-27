@@ -1,9 +1,8 @@
-package com.example.task_8_finaly
+package com.example.task_8_finaly.presentation.ui.adapter
 
-import android.os.Handler
-import android.os.Looper
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.task_8_finaly.domain.models.Track
 
 class TrackAdapter(
     private var tracks: List<Track>,

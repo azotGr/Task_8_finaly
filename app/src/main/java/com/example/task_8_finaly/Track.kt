@@ -1,4 +1,4 @@
-package com.example.task_8_finaly
+package com.example.task_8_finaly.domain.models
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
