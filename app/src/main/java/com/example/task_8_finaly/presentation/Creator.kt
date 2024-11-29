@@ -1,5 +1,7 @@
 package com.example.task_8_finaly.presentation
 
+import PlayerRepositoryImpl
+
 import com.example.task_8_finaly.data.PlayerData
 import com.example.task_8_finaly.data.network.iTunesAPI
 import com.example.task_8_finaly.data.repository.TrackReposImpl
@@ -37,9 +39,15 @@ class Creator {
         }
 
         fun providePlayInter(): PlayInter {
-            val playerDataSource = PlayerData() // Создаем источник данных для MediaPlayer
-            val uiHandler = DefaultUIHandler() // Создаем обработчик UI
-            return PlayImpl(playerDataSource, uiHandler) // Передаем зависимости в PlayImpl
+            // Создаем PlayerData и PlayerRepositoryImpl
+            val playerData = PlayerData()
+            val playerRepository = PlayerRepositoryImpl(playerData)
+
+            // Создаем обработчик UI
+            val uiHandler = DefaultUIHandler()
+
+            // Передаём зависимости в PlayImpl
+            return PlayImpl(playerRepository, uiHandler)
         }
     }
 }

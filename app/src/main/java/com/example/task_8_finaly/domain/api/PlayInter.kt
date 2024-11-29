@@ -10,4 +10,5 @@ interface PlayInter {
     fun isPlaying(): Boolean
     fun seekToStart()
     fun hasReachedEnd(): Boolean
+    fun getCurrentPosition(): Int
 }

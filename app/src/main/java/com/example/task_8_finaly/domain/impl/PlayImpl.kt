@@ -1,64 +1,62 @@
 package com.example.task_8_finaly.domain.impl
-
-import com.example.task_8_finaly.data.PlayerData
 import com.example.task_8_finaly.domain.api.PlayInter
 import com.example.task_8_finaly.domain.api.UIHandler
 import com.example.task_8_finaly.domain.models.Track
 
 class PlayImpl(
-    private val playerData: PlayerData,
+    private val playerRepository: PlayInter, // Интерфейс вместо конкретного PlayerData
     private val uiHandler: UIHandler // Интерфейс для UI обновлений
 ) : PlayInter {
 
-    private var hasReachedEnd = false
 
     override fun preparePlayer(
         track: Track,
         onTimeUpdate: (String) -> Unit,
         onCompletion: () -> Unit
     ) {
-        hasReachedEnd = false
-        playerData.preparePlayer(track) {
-            hasReachedEnd = true
+        playerRepository.preparePlayer(track, onTimeUpdate) {
             uiHandler.stopUpdating() // Уведомляем UI-слой остановить обновления
             onCompletion()
         }
 
         uiHandler.startUpdating {
-            val currentPosition = playerData.getCurrentPosition() / 1000
+            val currentPosition = playerRepository.getCurrentPosition() / 1000
             val formattedTime = String.format("%02d:%02d", currentPosition / 60, currentPosition % 60)
             onTimeUpdate(formattedTime)
         }
     }
 
     override fun play(onTimeUpdate: (String) -> Unit) {
-        if (hasReachedEnd) {
+        if (playerRepository.hasReachedEnd()) {
             seekToStart()
         }
-        playerData.play()
+        playerRepository.play(onTimeUpdate)
         uiHandler.resumeUpdating()
     }
 
     override fun pause() {
-        playerData.pause()
+        playerRepository.pause()
         uiHandler.stopUpdating()
     }
 
     override fun release() {
-        playerData.release()
+        playerRepository.release()
         uiHandler.stopUpdating()
     }
 
     override fun isPlaying(): Boolean {
-        return playerData.isPlaying()
+        return playerRepository.isPlaying()
     }
 
     override fun seekToStart() {
-        playerData.seekToStart()
-        hasReachedEnd = false
+        playerRepository.seekToStart()
     }
 
     override fun hasReachedEnd(): Boolean {
-        return hasReachedEnd
+        return playerRepository.hasReachedEnd()
+    }
+
+    override fun getCurrentPosition(): Int {
+        return playerRepository.getCurrentPosition()
     }
 }

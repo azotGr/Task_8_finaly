@@ -6,6 +6,7 @@ import com.example.task_8_finaly.domain.models.Track
 class PlayerData {
     private var mediaPlayer: MediaPlayer? = null
     private var onCompletionCallback: (() -> Unit)? = null
+    private var hasReachedEnd = false
 
     fun preparePlayer(track: Track, onCompletion: () -> Unit) {
         mediaPlayer = MediaPlayer().apply {
@@ -13,6 +14,7 @@ class PlayerData {
             prepare()
             setOnCompletionListener {
                 onCompletion()
+                hasReachedEnd = true
             }
         }
         onCompletionCallback = onCompletion
@@ -41,5 +43,9 @@ class PlayerData {
 
     fun getCurrentPosition(): Int {
         return mediaPlayer?.currentPosition ?: 0
+    }
+
+    fun hasReachedEnd(): Boolean {
+        return mediaPlayer?.isPlaying == false && mediaPlayer?.currentPosition == mediaPlayer?.duration
     }
 }
