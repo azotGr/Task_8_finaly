@@ -1,4 +1,4 @@
-package com.example.task_8_finaly
+package com.example.task_8_finaly.presentation.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.example.task_8_finaly.R
+import com.example.task_8_finaly.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 

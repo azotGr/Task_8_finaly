@@ -1,9 +1,12 @@
-package com.example.task_8_finaly
+package com.example.task_8_finaly.presentation.ui.search
 import android.content.Context
 import android.content.Intent
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.task_8_finaly.domain.models.Track
+import com.example.task_8_finaly.presentation.ui.adapter.TrackAdapter
+import com.example.task_8_finaly.presentation.ui.player.ActivityPlayer
 import com.google.android.material.button.MaterialButton
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

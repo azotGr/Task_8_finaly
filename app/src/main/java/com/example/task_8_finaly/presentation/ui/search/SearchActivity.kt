@@ -1,4 +1,4 @@
-package com.example.task_8_finaly
+package com.example.task_8_finaly.presentation.ui.search
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -22,12 +21,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.task_8_finaly.R
+import com.example.task_8_finaly.domain.api.SearchTrackInter
+import com.example.task_8_finaly.domain.models.Track
+import com.example.task_8_finaly.presentation.Creator
+import com.example.task_8_finaly.presentation.ui.adapter.TrackAdapter
+import com.example.task_8_finaly.presentation.ui.player.ActivityPlayer
 import com.google.gson.Gson
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class SearchActivity : AppCompatActivity() {
 
@@ -36,7 +36,7 @@ class SearchActivity : AppCompatActivity() {
     private var recyclerView: RecyclerView? = null
     private lateinit var trackAdapter: TrackAdapter
 
-    private lateinit var iTunesService: iTunesAPI
+    private lateinit var searchInter: SearchTrackInter
     private lateinit var placeholderError: ImageView
     private lateinit var messageError: TextView
     private lateinit var errorLayout: LinearLayout
@@ -74,13 +74,6 @@ class SearchActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_search)
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://itunes.apple.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        iTunesService = retrofit.create(iTunesAPI::class.java)
-
         searchLine = findViewById(R.id.searchLine)
         clearButton = findViewById(R.id.clearIcon)
         recyclerView = findViewById(R.id.recyclerView)
@@ -94,7 +87,6 @@ class SearchActivity : AppCompatActivity() {
         recyclerView?.visibility = View.GONE
         errorLayout.visibility = View.GONE
         progressBarScreen.visibility = View.GONE
-
 
 
         val backButton: ImageButton = findViewById(R.id.buttonBackSearch)
@@ -141,9 +133,7 @@ class SearchActivity : AppCompatActivity() {
             findViewById(R.id.searchHistoryHeader)
         )
 
-        searchHistoryTracks.setOnItemClickListener { track ->
-            startPlayerActivity(track)
-        }
+        searchInter = Creator.provideSearchTrackInter()
 
 
         // Настройка событий для поиска
@@ -304,37 +294,26 @@ class SearchActivity : AppCompatActivity() {
         recyclerView?.visibility = View.GONE
         //progressBarScreen.visibility = View.VISIBLE
 
-        val call = iTunesService.search(query)
-        call.enqueue(object : Callback<ItunesSearchResponse> {
-            override fun onResponse(
-                call: Call<ItunesSearchResponse>,
-                response: Response<ItunesSearchResponse>
-            ) {
+        progressBarScreen.visibility = View.VISIBLE
+
+        searchInter.searchTracks(query) { result ->
+            runOnUiThread {
                 progressBarScreen.visibility = View.GONE
-                if (response.isSuccessful) {
-                    val searchResponse = response.body()
-                    if (searchResponse != null && searchResponse.results.isNotEmpty()) {
-                        val tracks = searchResponse.results
+                if (result.isSuccess) {
+                    val tracks = result.getOrNull()
+                    if (!tracks.isNullOrEmpty()) {
                         trackAdapter.updateTracks(tracks)
                         recyclerView?.visibility = View.VISIBLE
-                        Log.d("NOTNULL", "isSuccessful")
                         hideError()
                         hideUpdateButton()
                     } else {
                         noResults()
-                        Log.d("NoResultsPlaceholder", "isSuccessful")
                     }
                 } else {
                     showError()
-                    Log.d("ErrorPlaceholder", "NOTSuccessful")
                 }
             }
-
-            override fun onFailure(call: Call<ItunesSearchResponse>, t: Throwable) {
-                progressBarScreen.visibility = View.GONE
-                showError()
-            }
-        })
+        }
     }
 
     private fun retryLastSearch() {
