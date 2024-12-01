@@ -10,13 +10,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.task_8_finaly.R
-import com.example.task_8_finaly.domain.api.PlayInter
+import com.example.task_8_finaly.domain.api.PlayInteractor
 import com.example.task_8_finaly.domain.models.Track
 import com.example.task_8_finaly.presentation.Creator
 
 class ActivityPlayer : AppCompatActivity() {
 
-    private lateinit var playInter: PlayInter
+    private lateinit var playInter: PlayInteractor
     private lateinit var playButton: ImageButton
     private lateinit var currentPlayTimeTextView: TextView
 

@@ -1,39 +1,52 @@
-import com.example.task_8_finaly.data.PlayerData
-import com.example.task_8_finaly.domain.api.PlayInter
+package com.example.task_8_finaly.data
+
+import android.media.MediaPlayer
+import com.example.task_8_finaly.domain.api.PlayerRepository
 import com.example.task_8_finaly.domain.models.Track
 
-class PlayerRepositoryImpl(private val playerData: PlayerData) : PlayInter {
+class PlayerRepositoryImpl : PlayerRepository{
+    private var mediaPlayer: MediaPlayer? = null
+    private var onCompletionCallback: (() -> Unit)? = null
+    private var hasReachedEnd = false
 
-    override fun preparePlayer(track: Track, onTimeUpdate: (String) -> Unit, onCompletion: () -> Unit) {
-        playerData.preparePlayer(track, onCompletion)
+    override fun preparePlayer(track: Track,onTimeUpdate: (String) -> Unit, onCompletion: () -> Unit) {
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(track.previewUrl)
+            prepare()
+            setOnCompletionListener {
+                onCompletion()
+                hasReachedEnd = true
+            }
+        }
+        onCompletionCallback = onCompletion
     }
 
     override fun play(onTimeUpdate: (String) -> Unit) {
-        playerData.play()
+        mediaPlayer?.start()
     }
 
     override fun pause() {
-        playerData.pause()
+        mediaPlayer?.pause()
     }
 
     override fun release() {
-        playerData.release()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     override fun isPlaying(): Boolean {
-        return playerData.isPlaying()
+        return mediaPlayer?.isPlaying ?: false
     }
 
     override fun seekToStart() {
-        playerData.seekToStart()
+        mediaPlayer?.seekTo(0)
     }
 
     override fun getCurrentPosition(): Int {
-        return playerData.getCurrentPosition()
+        return mediaPlayer?.currentPosition ?: 0
     }
 
     override fun hasReachedEnd(): Boolean {
-        return playerData.hasReachedEnd()
+        return mediaPlayer?.isPlaying == false && mediaPlayer?.currentPosition == mediaPlayer?.duration
     }
-
 }

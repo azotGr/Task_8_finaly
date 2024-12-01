@@ -7,7 +7,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.task_8_finaly.R
-import com.example.task_8_finaly.presentation.app.App
+import com.example.task_8_finaly.App
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 

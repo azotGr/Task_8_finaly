@@ -1,4 +1,4 @@
-package com.example.task_8_finaly.presentation.app
+package com.example.task_8_finaly
 
 import android.app.Application
 import android.content.Context

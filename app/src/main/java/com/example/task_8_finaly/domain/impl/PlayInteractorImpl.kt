@@ -1,12 +1,13 @@
 package com.example.task_8_finaly.domain.impl
-import com.example.task_8_finaly.domain.api.PlayInter
+import com.example.task_8_finaly.domain.api.PlayInteractor
+import com.example.task_8_finaly.domain.api.PlayerRepository
 import com.example.task_8_finaly.domain.api.UIHandler
 import com.example.task_8_finaly.domain.models.Track
 
-class PlayImpl(
-    private val playerRepository: PlayInter, // Интерфейс вместо конкретного PlayerData
+class PlayInteractorImpl(
+    private val playerRepository: PlayerRepository, // Интерфейс вместо конкретного PlayerData
     private val uiHandler: UIHandler // Интерфейс для UI обновлений
-) : PlayInter {
+) : PlayInteractor {
 
 
     override fun preparePlayer(

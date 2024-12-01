@@ -1,14 +1,11 @@
 package com.example.task_8_finaly.presentation
-
-import PlayerRepositoryImpl
-
-import com.example.task_8_finaly.data.PlayerData
+import com.example.task_8_finaly.data.PlayerRepositoryImpl
 import com.example.task_8_finaly.data.network.iTunesAPI
-import com.example.task_8_finaly.data.repository.TrackReposImpl
-import com.example.task_8_finaly.domain.api.PlayInter
+import com.example.task_8_finaly.data.repository.TrackRepositoryImpl
+import com.example.task_8_finaly.domain.api.PlayInteractor
 import com.example.task_8_finaly.domain.api.SearchTrackInter
 import com.example.task_8_finaly.domain.api.TrackRepository
-import com.example.task_8_finaly.domain.impl.PlayImpl
+import com.example.task_8_finaly.domain.impl.PlayInteractorImpl
 import com.example.task_8_finaly.domain.impl.SearchTrackImpl
 import com.example.task_8_finaly.presentation.ui.DefaultUIHandler
 import retrofit2.Retrofit
@@ -30,7 +27,7 @@ class Creator {
         }
 
         fun createTrackRepos(): TrackRepository {
-            return TrackReposImpl(createITunesAPI())
+            return TrackRepositoryImpl(createITunesAPI())
         }
 
         fun provideSearchTrackInter(): SearchTrackInter {
@@ -38,16 +35,14 @@ class Creator {
             return SearchTrackImpl(repository)
         }
 
-        fun providePlayInter(): PlayInter {
-            // Создаем PlayerData и PlayerRepositoryImpl
-            val playerData = PlayerData()
-            val playerRepository = PlayerRepositoryImpl(playerData)
+        fun providePlayInter(): PlayInteractor {
+            val playerRepository = PlayerRepositoryImpl()
 
             // Создаем обработчик UI
             val uiHandler = DefaultUIHandler()
 
             // Передаём зависимости в PlayImpl
-            return PlayImpl(playerRepository, uiHandler)
+            return PlayInteractorImpl(playerRepository, uiHandler)
         }
     }
 }
