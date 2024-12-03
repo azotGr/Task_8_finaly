@@ -2,6 +2,7 @@ package com.example.task_8_finaly.data
 
 import android.content.Context
 import com.example.task_8_finaly.App
+import com.example.task_8_finaly.data.preference.SettingsManager
 import com.example.task_8_finaly.domain.api.SharedPreferenceRepository
 
 class SharedPreferenceRepositoryImp(

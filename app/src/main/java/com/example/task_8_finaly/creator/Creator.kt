@@ -1,7 +1,7 @@
-package com.example.task_8_finaly.presentation
+package com.example.task_8_finaly.creator
 import com.example.task_8_finaly.App
 import com.example.task_8_finaly.data.PlayerRepositoryImpl
-import com.example.task_8_finaly.data.SettingsManager
+import com.example.task_8_finaly.data.preference.SettingsManager
 import com.example.task_8_finaly.data.SharedPreferenceRepositoryImp
 import com.example.task_8_finaly.data.network.iTunesAPI
 import com.example.task_8_finaly.data.repository.TrackRepositoryImpl

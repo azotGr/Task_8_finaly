@@ -12,7 +12,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.task_8_finaly.R
 import com.example.task_8_finaly.domain.api.PlayInteractor
 import com.example.task_8_finaly.domain.models.Track
-import com.example.task_8_finaly.presentation.Creator
+import com.example.task_8_finaly.creator.Creator
 
 class ActivityPlayer : AppCompatActivity() {
 

@@ -1,4 +1,4 @@
-package com.example.task_8_finaly.data
+package com.example.task_8_finaly.data.preference
 
 import android.content.Context
 import android.content.Intent

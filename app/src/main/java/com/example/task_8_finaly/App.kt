@@ -3,7 +3,7 @@ package com.example.task_8_finaly
 import android.app.Application
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.task_8_finaly.presentation.Creator
+import com.example.task_8_finaly.creator.Creator
 
 class App : Application() {
 

@@ -4,13 +4,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageButton
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.task_8_finaly.R
 import com.example.task_8_finaly.App
 import com.example.task_8_finaly.databinding.ActivitySettingsBinding
 import com.example.task_8_finaly.domain.api.SettingsInteractor
-import com.example.task_8_finaly.presentation.Creator
+import com.example.task_8_finaly.creator.Creator
 
 class SettingsActivity : AppCompatActivity() {
 
