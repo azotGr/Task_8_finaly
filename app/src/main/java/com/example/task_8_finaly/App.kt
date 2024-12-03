@@ -3,34 +3,38 @@ package com.example.task_8_finaly
 import android.app.Application
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.task_8_finaly.presentation.Creator
 
 class App : Application() {
 
-    var darkTheme = false
-
     override fun onCreate() {
         super.onCreate()
-        val sharedPreferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        if (!sharedPreferences.contains("DARK_THEME")) {
-            val isSystemDark = (resources.configuration.uiMode and
-                    android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
-                    android.content.res.Configuration.UI_MODE_NIGHT_YES
-            sharedPreferences.edit().putBoolean("DARK_THEME", isSystemDark).apply()
-        }
 
-        applyTheme()
+        context = applicationContext
+        val settingsInteractor = Creator.provideSettingsInteractor()
+
+        darkTheme = settingsInteractor.getThemePreference()
+        settingsInteractor.setDarkTheme(settingsInteractor.getThemePreference())
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {
-        val sharedPreferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putBoolean("DARK_THEME", darkThemeEnabled).apply()
-        applyTheme()
+        darkTheme = darkThemeEnabled
+        AppCompatDelegate.setDefaultNightMode(
+            if (darkThemeEnabled) {
+                AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                AppCompatDelegate.MODE_NIGHT_NO
+            }
+        )
     }
 
-    private fun applyTheme() {
-        val sharedPreferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val darkTheme = sharedPreferences.getBoolean("DARK_THEME", false)
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkTheme) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
+    companion object {
+        fun getContext(): Context {
+            return context
+        }
+
+        private lateinit var context: Context
+        var darkTheme: Boolean = false
+
     }
 }
