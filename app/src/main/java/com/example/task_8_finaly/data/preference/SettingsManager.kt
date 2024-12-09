@@ -1,30 +1,24 @@
 package com.example.task_8_finaly.data.preference
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import com.example.task_8_finaly.R
+import android.content.Context.MODE_PRIVATE
 
-class SettingsManager(private val activityContext: Context) {
-    val sharedPreferences = activityContext.getSharedPreferences("MODE", Context.MODE_PRIVATE)
+const val APP_THEME_PREFERENCES = "app_theme_preferences"
+const val dark_theme = "dark_theme"
 
-    fun share(activityContext: Context) {
-        val intent = Intent(Intent.ACTION_SEND)
-        val shareBody = activityContext.getString(R.string.yandex_curses)
-        intent.type = "text/plain"
-        intent.putExtra(Intent.EXTRA_TEXT, shareBody)
-        activityContext.startActivity(Intent.createChooser(intent, "Share"))
+class SettingsManager(context: Context) {
+
+    private val sharedPreferences = context.getSharedPreferences(APP_THEME_PREFERENCES, MODE_PRIVATE)
+
+
+    fun getThemePreference(): Boolean {
+        return sharedPreferences.getBoolean(dark_theme, false)
     }
 
-    fun help(activityContext: Context) {
-        val message = activityContext.getString(R.string.text_email)
-        val subject = activityContext.getString(R.string.title_email)
-        val shareIntent = Intent(Intent.ACTION_SENDTO).apply {
-            data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(activityContext.getString(R.string.email)))
-            putExtra(Intent.EXTRA_TEXT, message)
-            putExtra(Intent.EXTRA_SUBJECT, subject)
-        }
-        activityContext.startActivity(shareIntent)
+    fun saveThemePreferences(isDarkTheme: Boolean) {
+        sharedPreferences.edit()
+            .putBoolean(com.example.task_8_finaly.dark_theme, isDarkTheme)
+            .apply()
     }
+
 }

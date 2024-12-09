@@ -4,32 +4,32 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.task_8_finaly.R
 import com.example.task_8_finaly.App
-import com.example.task_8_finaly.databinding.ActivitySettingsBinding
 import com.example.task_8_finaly.domain.api.SettingsInteractor
 import com.example.task_8_finaly.creator.Creator
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var viewBinding: ActivitySettingsBinding
     private lateinit var settingsInteractor: SettingsInteractor
+    private lateinit var themeSwitcher: SwitchMaterial
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_settings)
 
-        viewBinding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(viewBinding.root)
+        settingsInteractor = Creator.provideSettingsInteractor(this)
 
-        settingsInteractor = Creator.getSettingInteractor()
+        themeSwitcher = findViewById(R.id.switchDark)
 
-        viewBinding.switchDark.isChecked = App.darkTheme
-        viewBinding.switchDark.setOnCheckedChangeListener { switcher, checked ->
+
+        themeSwitcher.isChecked = (applicationContext as App).darkTheme
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->
             (applicationContext as App).switchTheme(checked)
-            settingsInteractor.setDarkTheme(checked)
-            settingsInteractor.setDarkTheme(viewBinding.switchDark.isChecked)
-            App.darkTheme = settingsInteractor.getDarkTheme()
+            settingsInteractor.saveThemePreferences(checked)
         }
 
         //кнопочка назад должна воркинг
@@ -39,28 +39,32 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        //BUTTON SHARE
-
-        viewBinding.imageRepost.setOnClickListener {
-            settingsInteractor.share(this)
+        val btnShare = findViewById<ImageView>(R.id.imageRepost)
+        btnShare.setOnClickListener {
+            val message = getString(R.string.yandex_curses)
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, message)
+            startActivity(intent)
         }
 
-        //BUTTON SUPPORT
-
-        viewBinding.imageSupport.setOnClickListener {
-            settingsInteractor.help(this)
+        val btnSupport = findViewById<ImageView>(R.id.imageSupport)
+        btnSupport.setOnClickListener {
+            val subject = getString(R.string.title_email)
+            val message = getString(R.string.text_email)
+            val userMail = getString(R.string.email)
+            val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"))
+            intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(userMail))
+            intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+            intent.putExtra(Intent.EXTRA_TEXT, message)
+            startActivity(intent)
         }
 
-        //BUTTON DOCUMENTS
-
-        viewBinding.imageRight.setOnClickListener {
-            val url = getString(R.string.offer)
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        val btnTerms = findViewById<ImageView>(R.id.imageRight)
+        btnTerms.setOnClickListener {
+            val link = getString(R.string.offer)
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+            startActivity(intent)
         }
-    }
-    override fun onDestroy() {
-        super.onDestroy()
-        settingsInteractor.setDarkTheme(viewBinding.switchDark.isChecked)
-        App.darkTheme = settingsInteractor.getDarkTheme()
     }
 }

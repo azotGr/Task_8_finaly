@@ -1,16 +1,15 @@
 package com.example.task_8_finaly.creator
 import android.content.Context
-import com.example.task_8_finaly.App
 import com.example.task_8_finaly.data.PlayerRepositoryImpl
+import com.example.task_8_finaly.data.SettingsRepositoryImpl
 import com.example.task_8_finaly.data.preference.SettingsManager
-import com.example.task_8_finaly.data.SharedPreferenceRepositoryImp
 import com.example.task_8_finaly.data.network.RetrofitNetworkClient
 import com.example.task_8_finaly.data.preference.TrackManager
 import com.example.task_8_finaly.data.repository.TracksRepositoryImpl
 import com.example.task_8_finaly.domain.api.PlayInteractor
 import com.example.task_8_finaly.domain.api.TracksInteractor
 import com.example.task_8_finaly.domain.api.SettingsInteractor
-import com.example.task_8_finaly.domain.api.SharedPreferenceRepository
+import com.example.task_8_finaly.domain.api.SettingsRepository
 import com.example.task_8_finaly.domain.api.TrackRepository
 import com.example.task_8_finaly.domain.impl.PlayInteractorImpl
 import com.example.task_8_finaly.domain.impl.SettingsInteractorImpl
@@ -39,19 +38,16 @@ class Creator {
             return PlayInteractorImpl(playerRepository, uiHandler)
         }
 
-        fun getSettingInteractor(): SettingsInteractor {
-            return SettingsInteractorImpl(getSharedPreferenceRepository())
+        private fun getSettingsManager(context: Context): SettingsManager {
+            return SettingsManager(context)
         }
 
-        fun provideSettingsInteractor(): SettingsInteractor {
-            return SettingsInteractorImpl(getSharedPreferenceRepository())
-        }
-        private fun getSharedPreferenceRepository(): SharedPreferenceRepository {
-            return SharedPreferenceRepositoryImp()
+        private fun getSettingsRepository(context: Context): SettingsRepository {
+            return SettingsRepositoryImpl(getSettingsManager(context))
         }
 
-        private fun getSettingsManager(): SettingsManager {
-            return SettingsManager(App.getContext())
+        fun provideSettingsInteractor(context: Context): SettingsInteractor {
+            return SettingsInteractorImpl(getSettingsRepository(context))
         }
 
         private fun getTrackManager(context: Context): TrackManager {
