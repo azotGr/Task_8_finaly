@@ -19,7 +19,8 @@
     <string name="offer">https://yandex.ru/legal/practicum_offer/</string>
     <string name="update">Обновить</string>
     <string name="nothing_found">Ничего не нашлось</string>
-    <string name="no_int">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="no_int">Проблемы со связью</string>
+    <string name="no_int_sorr">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="you_searched">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
     <string name="search_hint_text">Введите название трека или исполнителя</string>
@@ -29,5 +30,7 @@
     <string name="player_year">Год</string>
     <string name="player_genre">Жанр</string>
     <string name="player_country">Страна</string>
+    <string name="app_reload">Обновить</string>
+    <string name="error">Запрос не может быть пустым</string>
 
 </resources>
