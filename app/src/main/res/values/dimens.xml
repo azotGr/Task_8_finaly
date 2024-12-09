@@ -48,4 +48,5 @@
     <dimen name="player_height">32dp</dimen>
     <dimen name="_12sp">12sp</dimen>
     <dimen name="player_image_corner_radius">8dp</dimen>
+    <dimen name="_110dp">110dp</dimen>
 </resources>

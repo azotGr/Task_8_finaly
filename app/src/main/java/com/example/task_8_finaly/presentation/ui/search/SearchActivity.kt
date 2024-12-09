@@ -1,363 +1,299 @@
 package com.example.task_8_finaly.presentation.ui.search
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.task_8_finaly.R
-import com.example.task_8_finaly.domain.api.SearchTrackInter
-import com.example.task_8_finaly.domain.models.Track
 import com.example.task_8_finaly.creator.Creator
-import com.example.task_8_finaly.presentation.ui.adapter.TrackAdapter
+import com.example.task_8_finaly.domain.api.TracksInteractor
+import com.example.task_8_finaly.domain.models.Track
+import com.example.task_8_finaly.presentation.ui.adapter.TracksAdapter
 import com.example.task_8_finaly.presentation.ui.player.ActivityPlayer
-import com.google.gson.Gson
+import com.example.task_8_finaly.presentation.ui.track.TrackClickListener
+import com.google.android.material.button.MaterialButton
+
+const val TRACK = "track"
 
 class SearchActivity : AppCompatActivity() {
 
-    private lateinit var searchLine: EditText
-    private lateinit var clearButton: AppCompatImageView
-    private var recyclerView: RecyclerView? = null
-    private lateinit var trackAdapter: TrackAdapter
-
-    private lateinit var searchInter: SearchTrackInter
-    private lateinit var placeholderError: ImageView
-    private lateinit var messageError: TextView
-    private lateinit var errorLayout: LinearLayout
-    private lateinit var updateButtonLayout: LinearLayout
-    private lateinit var updateButton: Button
-    private lateinit var progressBarScreen: LinearLayout
-
-    private lateinit var searchHistoryTracks: SearchHistoryTracks
-
-    private var lastQuery: String = ""
-
-
-    companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
-
+    private var textValue = TEXT_DEF
     private var isClickAllowed = true
+    private val tracks = ArrayList<Track>()
+    private lateinit var tracksAdapter: TracksAdapter
+    private lateinit var searchTracksAdapter: TracksAdapter
     private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { performSearch() }
 
-    private fun clickDebounce() : Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
-
-    private var searchRunnable: Runnable? = null
-
+    private lateinit var trackInteractor: TracksInteractor
+    private lateinit var inputMethodManager: InputMethodManager
+    private lateinit var phSomethingWentWrong: ViewGroup
+    private lateinit var phNothingFound: ViewGroup
+    private lateinit var btnBack: ImageButton
+    private lateinit var hintLatestSearch: ViewGroup
+    private lateinit var inputEditText: EditText
+    private lateinit var clearBtn: ImageView
+    private lateinit var rvTrackSearch: RecyclerView
+    private lateinit var rvLatestTrack: RecyclerView
+    private lateinit var reloadBtn: Button
+    private lateinit var clearHistoryBtn: MaterialButton
+    private lateinit var latestSearchHeading: TextView
+    private lateinit var progressBar: ProgressBar
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_search)
-
-        searchLine = findViewById(R.id.searchLine)
-        clearButton = findViewById(R.id.clearIcon)
-        recyclerView = findViewById(R.id.recyclerView)
-        placeholderError = findViewById(R.id.placeholderError)
-        messageError = findViewById(R.id.messageError)
-        errorLayout = findViewById(R.id.errorLayout)
-        updateButtonLayout = findViewById(R.id.update_button_layout)
-        updateButton = findViewById(R.id.update_button)
-        progressBarScreen = findViewById(R.id.progressBarLayout)
-
-        recyclerView?.visibility = View.GONE
-        errorLayout.visibility = View.GONE
-        progressBarScreen.visibility = View.GONE
-
-
-        val backButton: ImageButton = findViewById(R.id.buttonBackSearch)
-        backButton.setOnClickListener {
-            finish()
+        trackInteractor = Creator.provideTracksInteractor(this)
+        inputMethodManager = (getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)!!
+        setViews()
+        setAdapters()
+        setButtons()
+        setTextWatcher()
+        inputEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (inputEditText.text.isNotEmpty()) {
+                    performSearch()
+                } else {
+                    Toast.makeText(this, "Запрос не может быть пустым", Toast.LENGTH_SHORT).show()
+                }
+                true
+            }
+            false
         }
-
-        fun hideKeyboard() {
-            val hide = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            hide.hideSoftInputFromWindow(searchLine.windowToken, 0)
+        inputEditText.setOnFocusChangeListener { _, hasFocus -> showLatestSearch(hasFocus) }
+    }
+    override fun onStop() {
+        super.onStop()
+        trackInteractor.saveSearchedTracks(searchTracksAdapter.tracks)
+    }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(INPUT_TEXT, textValue)
+    }
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        textValue = savedInstanceState.getString(INPUT_TEXT, TEXT_DEF)
+    }
+    private fun clearButtonVisibility(s: CharSequence?): Int {
+        return if (s.isNullOrEmpty()) {
+            View.GONE
+        } else {
+            View.VISIBLE
         }
+    }
+    private fun setAdapters() {
+        tracksAdapter = TracksAdapter(createOnTrackClick())
+        searchTracksAdapter = TracksAdapter(createOnTrackClick())
 
-        clearButton.setOnClickListener {
-            searchLine.text.clear()
-            hideKeyboard()
-            recyclerView?.visibility = View.GONE
-            hideError()
-            hideUpdateButton()
-            searchHistoryTracks.loadSearchHistory() // Загрузка истории после очистки текста
-            trackAdapter.updateTracks(emptyList())
+        // Настраиваем RecyclerView для результатов поиска
+        tracksAdapter.tracks = tracks
+        rvTrackSearch.layoutManager = LinearLayoutManager(this)
+        rvTrackSearch.adapter = tracksAdapter
+
+        // Настраиваем RecyclerView для последних поисков
+        rvLatestTrack.layoutManager = LinearLayoutManager(this)
+        searchTracksAdapter.tracks = trackInteractor.getSearchedTracks()
+        rvLatestTrack.adapter = searchTracksAdapter
+
+        clearHistoryBtn.isVisible = searchTracksAdapter.tracks.isNotEmpty()
+    }
+    private fun setViews() {
+        phSomethingWentWrong = findViewById(R.id.phSomethingWentWrong)
+        phNothingFound = findViewById(R.id.phNothingFound)
+        btnBack = findViewById(R.id.btn_back)
+        inputEditText = findViewById(R.id.inputEditText)
+        clearBtn = findViewById(R.id.clearIcon)
+        rvTrackSearch = findViewById(R.id.rvTrackSearch)
+        rvLatestTrack = findViewById(R.id.rvLatestTrackSearch)
+        reloadBtn = findViewById(R.id.reloadBtn)
+        hintLatestSearch = findViewById(R.id.latestSearchList)
+        clearHistoryBtn = findViewById(R.id.clearSearchHistory)
+        latestSearchHeading = findViewById(R.id.latestSearchHeading)
+        progressBar = findViewById(R.id.progressBar)
+    }
+    private fun setBtnBack() {
+        btnBack.setOnClickListener { this.finish() }
+    }
+    private fun setBtnClear() {
+        clearBtn.setOnClickListener {
+            inputEditText.setText(TEXT_DEF)
+            tracks.clear()
+            tracksAdapter.notifyDataSetChanged()
+            inputMethodManager.hideSoftInputFromWindow(inputEditText.windowToken, 0)
         }
-
-        updateButton.setOnClickListener {
-            retryLastSearch()
-        }
-
-        trackAdapter = TrackAdapter(emptyList()) { track ->
-            if (clickDebounce()) {
-                val intent = Intent(this, ActivityPlayer::class.java)
-                intent.putExtra("track", track)
-                startActivity(intent)
-                searchHistoryTracks.addTrackToHistory(track)
-                searchHistoryTracks.hideHistory()
+    }
+    private fun setBtnReload() {
+        reloadBtn.setOnClickListener {
+            if (inputEditText.text.isNotEmpty()) {
+                performSearch()
             }
         }
-
-        recyclerView?.adapter = trackAdapter
-        recyclerView?.layoutManager = LinearLayoutManager(this)
-
-        searchHistoryTracks = SearchHistoryTracks(
-            this,
-            findViewById(R.id.recyclerHistoryTracks),
-            findViewById(R.id.historyClear),
-            findViewById(R.id.searchHistoryHeader)
-        )
-
-        searchInter = Creator.provideSearchTrackInter()
-
-
-        // Настройка событий для поиска
-        searchLine.addTextChangedListener(object : TextWatcher {
+    }
+    private fun setClearHistoryBtn() {
+        clearHistoryBtn.setOnClickListener {
+            trackInteractor.clearHistory()
+            searchTracksAdapter.tracks.clear()
+            hintLatestSearch.isVisible = true
+            searchTracksAdapter.notifyDataSetChanged()
+            clearHistoryBtn.isVisible = false
+        }
+    }
+    private fun setButtons() {
+        setBtnBack()
+        setBtnClear()
+        setBtnReload()
+        setClearHistoryBtn()
+    }
+    private fun setTextWatcher() {
+        val textWatcher = object: TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-                if (s.isNullOrEmpty()) {
-                    recyclerView?.visibility = View.GONE
-                    trackAdapter.updateTracks(emptyList())
-                    hideError()
-                    hideUpdateButton()
-                    if (searchLine.hasFocus()) {
-                        searchHistoryTracks.loadSearchHistory() // Показываем историю, если есть
-                    }
+                textValue = s.toString()
+                clearBtn.visibility = clearButtonVisibility(s)
+                hintLatestSearch.visibility = if (inputEditText.hasFocus() && s?.isEmpty() == true && searchTracksAdapter.tracks.isNotEmpty()) {
+                    View.VISIBLE
                 } else {
-                    searchHistoryTracks.hideHistory() // Скрываем историю при вводе текста
-                    progressBarScreen.visibility = View.VISIBLE
-                    debounceSearch(s.toString())
+                    searchDebounce()
+                    View.GONE
                 }
             }
+            override fun afterTextChanged(s: Editable?) {}
+        }
+        inputEditText.addTextChangedListener(textWatcher)
+    }
+    private fun showMessage(type: String) {
+        when(type) {
+            SOMETHING_WENT_WRONG -> {
+                phNothingFound.isVisible = false
+                phSomethingWentWrong.isVisible = true
+            }
+            NOTHING_FOUND -> {
+                phSomethingWentWrong.isVisible = false
+                phNothingFound.isVisible = true
+            }
+            NO_MESSAGE -> {
+                phSomethingWentWrong.isVisible = false
+                phNothingFound.isVisible = true
+            }
+        }
+    }
 
-            override fun afterTextChanged(s: Editable?) {
-                if (s.isNullOrEmpty()) {
-                    // Дополнительная проверка в afterTextChanged для обработки случая длительного нажатия кнопки "Стереть"
-                    recyclerView?.visibility = View.GONE
-                    trackAdapter.updateTracks(emptyList())
-                    hideError()
-                    hideUpdateButton()
-                    if (searchLine.hasFocus()) {
-                        searchHistoryTracks.loadSearchHistory()
+    private fun performSearch() {
+        if (!isNetworkAvailable()) {
+            showMessage(SOMETHING_WENT_WRONG) // Это включает отображение phSomethingWentWrong
+            return
+        }
+
+        val query = inputEditText.text.toString()
+
+        progressBar.isVisible = true
+        phNothingFound.isVisible = false
+        phSomethingWentWrong.isVisible = false
+        rvTrackSearch.isVisible = false
+
+        trackInteractor.searchTracks(query, object : TracksInteractor.TrackConsumer {
+            override fun consume(foundTracks: List<Track>) {
+                handler.post {
+                    progressBar.isVisible = false
+                    if (foundTracks.isNotEmpty()) {
+                        tracks.clear()
+                        rvTrackSearch.isVisible = true
+                        tracks.addAll(foundTracks)
+                        tracksAdapter.notifyDataSetChanged()
+                    } else {
+                        showMessage(NOTHING_FOUND)
                     }
                 }
             }
         })
+    }
+    private fun addSearchTrack(track: Track) {
+        val duplicateTrackIndex = searchTracksAdapter.tracks.indexOfFirst { it.trackId == track.trackId }
+        if (duplicateTrackIndex !=  -1) {
+            deleteSearchTrack(duplicateTrackIndex)
+        }
+        if (searchTracksAdapter.itemCount == LATEST_SEARCH_TRACKS_SIZE) {
+            val positionToRemove = LATEST_SEARCH_TRACKS_SIZE - 1
+            deleteSearchTrack(positionToRemove)
+        }
+        searchTracksAdapter.tracks.add(0, track)
+        searchTracksAdapter.notifyDataSetChanged()
+        clearHistoryBtn.isVisible = searchTracksAdapter.tracks.isNotEmpty()
+    }
+    private fun deleteSearchTrack(position: Int) {
+        searchTracksAdapter.tracks.removeAt(position)
+        searchTracksAdapter.notifyItemRemoved(position)
+        searchTracksAdapter.notifyItemRangeChanged(position, searchTracksAdapter.tracks.size)
+        clearHistoryBtn.isVisible = searchTracksAdapter.tracks.isNotEmpty()
+    }
 
-        // Отслеживание состояния фокуса
-        searchLine.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && searchLine.text.isEmpty()) {
-                searchHistoryTracks.loadSearchHistory()
-                recyclerView?.visibility = View.GONE
-            } else {
-                searchHistoryTracks.hideHistory()
+    private fun showLatestSearch(hasFocus: Boolean) { hintLatestSearch.isVisible = hasFocus && inputEditText.text.isEmpty() && searchTracksAdapter.tracks.isNotEmpty() }
+
+    private fun createOnTrackClick(): TrackClickListener {
+        val playerIntent = Intent(this@SearchActivity, ActivityPlayer::class.java)
+        val trackListener = TrackClickListener { track: Track ->
+            trackInteractor.addTrackToHistory(track)
+            addSearchTrack(track)
+            if (clickDebounce()) {
+                playerIntent.putExtra(TRACK, track)
+                startActivity(playerIntent)
             }
         }
+        return trackListener
+    }
 
-        //обработка пустого запроса от пользователя
-        searchLine.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val query = searchLine.text.toString().trim()
-                if (query.isNotEmpty()) {
-                    doSearch(query)
-                    hideKeyboard()
-                    searchHistoryTracks.hideHistory()
-                } else {
-                    recyclerView?.visibility = View.GONE
-                    Toast.makeText(this, "Введите непустой запрос", Toast.LENGTH_SHORT).show()
-                }
-                true
-            } else {
-                false
-            }
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true}, CLICK_DEBOUNCE_DELAY_MILLIS)
+        }
+        return current
+    }
+
+        private fun searchDebounce() {
+            handler.removeCallbacks(searchRunnable)
+            handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY_MILLIS)
         }
 
+        companion object {
+            private const val INPUT_TEXT = "INPUT_TEXT"
+            private const val TEXT_DEF = ""
+            private const val LATEST_SEARCH_TRACKS_SIZE = 10
+            private const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
+            private const val CLICK_DEBOUNCE_DELAY_MILLIS = 300L
 
-        backButton.setOnClickListener {
-            finish()
-        }
-
-        // Восстановление состояния при создании активити
-        if (savedInstanceState != null) {
-            lastQuery = savedInstanceState.getString("last_query", "")
-            searchLine.setText(lastQuery)
-            searchLine.setSelection(lastQuery.length)
-            if (searchLine.hasFocus()) {
-                if (lastQuery.isEmpty()) {
-                    if (searchHistoryTracks.hasHistory()) {
-                        recyclerView?.visibility = View.GONE
-                        hideError()
-                        hideUpdateButton()
-                        searchHistoryTracks.loadSearchHistory()
-                    } else {
-                        recyclerView?.visibility = View.GONE
-                        hideError()
-                        hideUpdateButton()
-                        searchHistoryTracks.hideHistory()
-                    }
-                } else {
-                    doSearch(lastQuery)
-                    searchHistoryTracks.hideHistory()
-                }
-            }
-        }
-
-        if (searchLine.text.isEmpty() && !searchLine.hasFocus()) {
-            searchHistoryTracks.hideHistory()
-        }
-
-        // Проверка наличия
-        val sharedPreferences = getSharedPreferences("player_prefs", MODE_PRIVATE)
-        val trackJson = sharedPreferences.getString("current_track", null)
-        if (trackJson != null) {
-            val track = Gson().fromJson(trackJson, Track::class.java)
-            val intent = Intent(this, ActivityPlayer::class.java)
-            intent.putExtra("track", track)
-            startActivity(intent)
+            private const val SOMETHING_WENT_WRONG = "SOMETHING_WENT_WRONG"
+            private const val NOTHING_FOUND = "NOTHING_FOUND"
+            private const val NO_MESSAGE = "NO_MESSAGE"
         }
     }
-
-    //сохраниние
-    override fun onPause() {
-        super.onPause()
-        val sharedPreferences = getSharedPreferences("player_prefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val track = intent.getSerializableExtra("track") as? Track
-        if (track != null) {
-            val trackJson = Gson().toJson(track)
-            editor.putString("current_track", trackJson)
-        } else {
-            editor.remove("current_track")
-        }
-        editor.apply()
-    }
-
-    // Сохранение состояния
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("SEARCH_TEXT", searchLine.text.toString())
-    }
-
-    // восстановление состояния
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        val searchText = savedInstanceState.getString("SEARCH_TEXT")
-        searchLine.setText(searchText)
-        searchLine.setSelection(searchText?.length ?: 0)
-    }
-
-    // Выполнение поискового запроса с задержкой (debounce)
-    private fun debounceSearch(query: String) {
-        searchRunnable?.let { handler.removeCallbacks(it) }
-        searchRunnable = Runnable {
-            doSearch(query)
-        }
-        searchRunnable?.let { runnable ->
-            handler.postDelayed(runnable, 2000) // Задержка 2 секунды
-        }
-    }
-
-    // Выполнение поискового запроса
-    private fun doSearch(query: String) {
-        lastQuery = query
-        searchHistoryTracks.hideHistory()
-
-        hideError()
-        hideUpdateButton()
-        recyclerView?.visibility = View.GONE
-        //progressBarScreen.visibility = View.VISIBLE
-
-        progressBarScreen.visibility = View.VISIBLE
-
-        searchInter.searchTracks(query) { result ->
-            runOnUiThread {
-                progressBarScreen.visibility = View.GONE
-                if (result.isSuccess) {
-                    val tracks = result.getOrNull()
-                    if (!tracks.isNullOrEmpty()) {
-                        trackAdapter.updateTracks(tracks)
-                        recyclerView?.visibility = View.VISIBLE
-                        hideError()
-                        hideUpdateButton()
-                    } else {
-                        noResults()
-                    }
-                } else {
-                    showError()
-                }
-            }
-        }
-    }
-
-    private fun retryLastSearch() {
-        doSearch(lastQuery)
-    }
-
-    private fun noResults() {
-        trackAdapter.updateTracks(emptyList())
-        recyclerView?.visibility = View.GONE
-        errorLayout.visibility = View.VISIBLE
-        placeholderError.visibility = View.VISIBLE
-        messageError.visibility = View.VISIBLE
-        updateButtonLayout.visibility = View.GONE
-        messageError.text = getString(R.string.nothing_found)
-        placeholderError.setImageResource(R.drawable.not_search)
-    }
-
-    private fun showError() {
-        trackAdapter.updateTracks(emptyList())
-        recyclerView?.visibility = View.GONE
-        errorLayout.visibility = View.VISIBLE
-        placeholderError.visibility = View.VISIBLE
-        messageError.visibility = View.VISIBLE
-        updateButtonLayout.visibility = View.VISIBLE
-        messageError.text = getString(R.string.no_int)
-        placeholderError.setImageResource(R.drawable.not_internet)
-        searchHistoryTracks.hideHistory()
-    }
-
-
-    private fun hideError() {
-        errorLayout.visibility = View.GONE
-    }
-
-
-    private fun hideUpdateButton() {
-        updateButtonLayout.visibility = View.GONE
-    }
-
-
-    private fun startPlayerActivity(track: Track) {
-        val intent = Intent(this@SearchActivity, ActivityPlayer::class.java)
-        intent.putExtra("track", track)
-        startActivity(intent)
-    }
-
-}

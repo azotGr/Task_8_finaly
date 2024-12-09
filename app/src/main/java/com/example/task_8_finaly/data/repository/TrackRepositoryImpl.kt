@@ -1,40 +1,47 @@
 package com.example.task_8_finaly.data.repository
 
-
-import com.example.playlist_maker.data.dto.TrackDto
-import com.example.task_8_finaly.data.dto.ItunesSearchResponse
-import com.example.task_8_finaly.data.network.iTunesAPI
+import com.example.task_8_finaly.data.NetworkClient
+import com.example.task_8_finaly.data.dto.TrackSearchRequest
+import com.example.task_8_finaly.data.dto.TrackSearchResponse
+import com.example.task_8_finaly.data.preference.TrackManager
 import com.example.task_8_finaly.domain.api.TrackRepository
 import com.example.task_8_finaly.domain.models.Track
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-class TrackRepositoryImpl(private val api: iTunesAPI) : TrackRepository {
-
-    override fun searchTracks(query: String, callback: (Result<List<Track>>) -> Unit) {
-        api.search(query).enqueue(object : Callback<ItunesSearchResponse> {
-            override fun onResponse(
-                call: Call<ItunesSearchResponse>,
-                response: Response<ItunesSearchResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val searchResponse = response.body()
-                    if (searchResponse != null && searchResponse.results.isNotEmpty()) {
-                        val tracks =
-                            searchResponse.results.map { trackDto: TrackDto -> trackDto.toDomain() }
-                        callback(Result.success(tracks))
-                    } else {
-                        callback(Result.success(emptyList()))
-                    }
-                } else {
-                    callback(Result.failure(Exception()))
-                }
+class TracksRepositoryImpl(private val networkClient: NetworkClient, private val trackManager: TrackManager) : TrackRepository {
+    override fun searchTracks(expression: String): List<Track> {
+        val response = networkClient.doRequest(TrackSearchRequest(expression))
+        if (response.resultCode == 200) {
+            return (response as TrackSearchResponse).results.map {
+                Track(
+                    it.trackId,
+                    it.trackName,
+                    it.artistName,
+                    it.trackTimeMillis,
+                    it.artworkUrl100,
+                    it.collectionName,
+                    it.releaseDate,
+                    it.primaryGenreName,
+                    it.country,
+                    it.previewUrl)
             }
+        } else {
+            return emptyList()
+        }
+    }
 
-            override fun onFailure(call: Call<ItunesSearchResponse>, t: Throwable) {
-                callback(Result.failure(t))
-            }
-        })
+    override fun getSearchedTracks(): ArrayList<Track> {
+        return trackManager.readTracksFromSearchHistory()
+    }
+
+    override fun saveSearchedTracks(tracks: ArrayList<Track>) {
+        trackManager.saveToSearchHistory(tracks)
+    }
+
+    override fun addTrackToHistory(track: Track) {
+        trackManager.addTrackToHistory(track)
+    }
+
+    override fun clearHistory() {
+        trackManager.clearHistory()
     }
 }

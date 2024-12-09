@@ -1,8 +1,9 @@
 package com.example.task_8_finaly.domain.models
+
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class Track (
+data class Track(
     @SerializedName("trackId") val trackId: Long,
     @SerializedName("trackName") val trackName: String,
     @SerializedName("artistName") val artistName: String,
