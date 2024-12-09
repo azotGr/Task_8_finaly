@@ -31,5 +31,6 @@
     <string name="player_genre">Жанр</string>
     <string name="player_country">Страна</string>
     <string name="app_reload">Обновить</string>
+    <string name="error">Запрос не может быть пустым</string>
 
 </resources>

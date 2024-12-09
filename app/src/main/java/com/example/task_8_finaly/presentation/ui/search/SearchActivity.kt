@@ -7,6 +7,8 @@ import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
+import android.provider.Settings.Secure.getString
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -76,7 +78,7 @@ class SearchActivity : AppCompatActivity() {
                 if (inputEditText.text.isNotEmpty()) {
                     performSearch()
                 } else {
-                    Toast.makeText(this, "Запрос не может быть пустым", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show()
                 }
                 true
             }
